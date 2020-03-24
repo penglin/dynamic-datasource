@@ -1,0 +1,10 @@
+/target/
+.classpath
+.project
+.settings/
+.svn/
+/bin/
+*.iml
+.idea
+/scheduleadmin.keytab
+/scheduleadmin.keytab_master-27

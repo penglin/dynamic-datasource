@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30">
+	<Properties>
+		<property name="LOG_PATH">logs/</property>
+		<property name="LOG_FILE">testlog4j2</property>
+	</Properties>
+
+	<DynamicThresholdFilter key="loginId"
+		defaultThreshold="ERROR" onMatch="ACCEPT" onMismatch="NEUTRAL">
+		<KeyValuePair key="User1" value="DEBUG" />
+	</DynamicThresholdFilter>
+	
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n</pattern>
+			</PatternLayout>
+		</Console>
+		<RollingFile name="errorlogfile" fileName="${LOG_PATH}/${LOG_FILE}.log"
+			filePattern="${LOG_PATH}/$${date:yyyy-MM}/${LOG_FILE}-%d{yyyy-MM-dd HH-mm}-%i.log">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+			<MapFilter onMatch="ACCEPT" onMismatch="DENY" operator="or">
+			    <KeyValuePair key="eventId" value="Login"/>
+			    <KeyValuePair key="eventId" value="Logout"/>
+			  </MapFilter>
+		</RollingFile>
+		
+		<RollingFile name="logtest" fileName="${LOG_PATH}/logtest.log"
+			filePattern="${LOG_PATH}/$${date:yyyy-MM}/logtest-%d{yyyy-MM-dd HH-mm}-%i.log">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<!-- 自定义log4j名称, 输出到指定目录 -->
+		<Logger name="logtest" level="trace" additivity="false">
+			<MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
+			<AppenderRef ref="logtest" />
+		</Logger>
+		
+		<root level="info">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="errorlogfile" />
+		</root>
+	</Loggers>
+</Configuration> 
